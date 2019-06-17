@@ -13,7 +13,7 @@ SET @triggerEnd := " END $$ DELIMITER ;";
 /*Error for bad configured SP*/
 IF (!onInsertTrig and !onUpdateTrig) THEN
 	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "No trigger updates specified."; 
-ELSEIF (select T.TABLE_ID from PCS_REF_TABLE T INNER JOIN PCS_REF_DATAPOINT D ON T.TABLE_ID = D.TABLE_ID WHERE ifnull(D.INACTIVE,FALSE) = FALSE and T.NAME = tableName LIMIT 1) IS NULL THEN 
+ELSEIF (select T.TABLE_ID from AUD_REF_TABLE T INNER JOIN AUD_REF_DATAPOINT D ON T.TABLE_ID = D.TABLE_ID WHERE ifnull(D.INACTIVE,FALSE) = FALSE and T.NAME = tableName LIMIT 1) IS NULL THEN 
 /*Throws error if nothing to audit*/
 	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "No Table or Datapoint to Audit."; 
 ELSE
@@ -25,7 +25,7 @@ ELSE
 		DECLARE insertPart VARCHAR(1000);
 		DECLARE insertWhole TEXT DEFAULT "";
 		
-		/* declare cursor for employee email */
+		/* declare cursor*/
 		DEClARE insert_cursor CURSOR FOR  select INSERT_SQL from AUD_REFRESH__SQL_HELPER WHERE TABLE_NAME = tableName;
 
 		/* declare NOT FOUND handler */
@@ -73,7 +73,7 @@ ELSE
 		DECLARE updatePart VARCHAR(1000);
 		DECLARE updateWhole TEXT DEFAULT "";
 		
-		/* declare cursor for employee email */
+		/* declare cursor*/
 		DEClARE update_cursor CURSOR FOR  select UPDATE_SQL from AUD_REFRESH__SQL_HELPER WHERE TABLE_NAME = tableName;
 
 		/* declare NOT FOUND handler */
